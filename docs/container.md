@@ -35,7 +35,7 @@ If your Apptainer installation support the "user bind control" feature, enable t
 
 ### How it works
 
-The integration for Apptainer follows the same execution model implemented for Docker. You won't need to modify your Nextflow script in order to run it with Apptainer. Simply specify the Apptainer image file from where the containers are started by using the `-with-apptainer` command line option. For example::
+The integration for Apptainer follows the same execution model implemented for Docker. You won't need to modify your Nextflow script in order to run it with Apptainer. Simply specify the Apptainer image file from where the containers are started by using the `-with-apptainer` command line option. For example:
 
 ```bash
 nextflow run <your script> -with-apptainer [apptainer image file]
@@ -66,9 +66,13 @@ Unlike Docker, Nextflow does not automatically mount host paths in the container
 When a process input is a *symbolic link* file, make sure the linked file is stored in a host folder that is accessible from a bind path defined in your Apptainer installation. Otherwise the process execution will fail because the launched container won't be able to access the linked file.
 :::
 
+:::{versionchanged} 23.07.0-edge
+Nextflow no longer mounts the home directory when launching an Apptainer container. To re-enable the old behavior, set the environment variable `NXF_APPTAINER_HOME_MOUNT` to `true`.
+:::
+
 ### Multiple containers
 
-It is possible to specify a different Apptainer image for each process definition in your pipeline script. For example, let's suppose you have two processes named `foo` and `bar`. You can specify two different Apptainer images specifying them in the `nextflow.config` file as shown below::
+It is possible to specify a different Apptainer image for each process definition in your pipeline script. For example, let's suppose you have two processes named `foo` and `bar`. You can specify two different Apptainer images specifying them in the `nextflow.config` file as shown below:
 
 ```groovy
 process {
@@ -573,6 +577,19 @@ Unlike Docker, Nextflow does not automatically mount host paths in the container
 
 :::{warning}
 When a process input is a *symbolic link* file, make sure the linked file is stored in a host folder that is accessible from a bind path defined in your Singularity installation. Otherwise the process execution will fail because the launched container won't be able to access the linked file.
+:::
+
+:::{versionchanged} 23.07.0-edge
+Nextflow no longer mounts the home directory when launching a Singularity container. To re-enable the old behavior, set the environment variable `NXF_SINGULARITY_HOME_MOUNT` to `true`.
+:::
+
+:::{versionchanged} 23.09.0-edge
+Nextflow automatically mounts the required host paths in the container. To re-enable the old behavior, set the environment variable `NXF_SINGULARITY_AUTO_MOUNTS` to `false` or set `singularity.autoMounts=false` in the Nextflow configuration file.
+:::
+
+:::{versionchanged} 23.09.0-edge
+Nextflow uses the command `run` to carry out the execution of Singularity containers instead of the `exec` command.
+To re-enable the old behavior, set the environment variable `NXF_SINGULARITY_RUN_COMMAND` to `exec`.
 :::
 
 ### Multiple containers
